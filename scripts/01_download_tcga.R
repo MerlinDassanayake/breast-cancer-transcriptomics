@@ -17,19 +17,19 @@ GDCdownload(query)
 se <- GDCprepare(query)
 
 # Keep primary tumor (TP) and solid tissue normal (NT) samples
-sample.types <- c("Primary Tumor", "Solid Tissue Normal")
-se <- se[, colData(se)$sample_type %in% sample.types]
+sample_types <- c("Primary Tumor", "Solid Tissue Normal")
+se <- se[, colData(se)$sample_type %in% sample_types]
 
 # Clinical data query
-clin.query <- GDCquery(
+clin_query <- GDCquery(
   project = "TCGA-BRCA",
   data.category = 'Clinical',
   data.type = 'Clinical Supplement',
   data.format = 'BCR Biotab'
 )
 
-GDCdownload(clin.query)
-clin <- GDCprepare(clin.query)
+GDCdownload(clin_query)
+clin <- GDCprepare(clin_query)
 
 # Save the prepared file objects for downstream analysis
 saveRDS(se, file = 'data/raw/tcga_brca_counts_se.rds')

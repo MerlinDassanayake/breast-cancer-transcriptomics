@@ -13,7 +13,8 @@ keep_genes <- rowSums(counts >= 10) >= 10
 se <- se[keep_genes, ]
 
 # Use sample_type to filter further
-colData(se)$group <- ifelse(coldata$sample_type == 'Primary Tumor', 'Tumor', 'Normal')
+# Primary Tumor = Tumor and Solid Tissue Normal = Normal
+colData(se)$group <- ifelse(colData(se)$sample_type == 'Primary Tumor', 'Tumor', 'Normal')
 
 # Build DESeqDataSet with design (Tumor vs Normal)
 coldata <- as.data.frame(colData(se))
@@ -30,7 +31,7 @@ saveRDS(vsd, 'data/processed/vsd.rds')
 
 # Sample QC: PCA
 pca <- prcomp(t(assay(vsd)))
-pc_df <- as.tibble(pca$x[,1:2], rownames = 'sample')
+pc_df <- as_tibble(pca$x[,1:2], rownames = 'sample')
 pc_df$group <- coldata$group
 
 ggplot(pc_df, aes(PC1, PC2, color = group)) + 
@@ -40,13 +41,20 @@ ggplot(pc_df, aes(PC1, PC2, color = group)) +
 ggsave("results/figures/pca_samples.png", width = 7, height = 5, dpi = 300)
 
 # Top-variable genes heatmap (quick look)
-topvar <- head(order(matrixStats::rowVars(assay(vsd)), decreasing = TRUE), 500)
+topvar <- head(order(matrixStats::rowVars(assay(vsd)), decreasing = TRUE), 50)
 mat <- assay(vsd)[topvar, ]
 mat <- t(scale(t(mat)))
+set.seed(123)  # for reproducibility
+sampled_columns <- sample(1:ncol(mat), 100)
+mat_sampled <- mat[, sampled_columns]
 
-# FIX: Corrected variable name from map to mat
-png("results/figures/heatmap_topvar.png", width = 1000, height = 1000, res = 150)
-draw(Heatmap(mat, show_row_names = FALSE, name = 'zscore'))
+png("results/figures/heatmap_topvar.png", width = 900, height = 1000, res = 150)
+
+draw(pheatmap(mat_sampled,
+         show_rownames = TRUE,
+         show_colnames = FALSE,
+         annotation_col = as.data.frame(colData(vsd)[sampled_columns, "group", drop = FALSE])))
+
 dev.off()
 
 print("Analysis completed successfully!")
