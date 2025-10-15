@@ -1,4 +1,4 @@
-# Loading in Libraries
+# Data acquisition
 library(TCGAbiolinks)
 library(SummarizedExperiment)
 
@@ -34,3 +34,5 @@ clin <- GDCprepare(clin_query)
 # Save the prepared file objects for downstream analysis
 saveRDS(se, file = 'data/raw/tcga_brca_counts_se.rds')
 saveRDS(clin, file = 'data/raw/tcga_brca_clinical.rds')
+
+print("Script 01 Complete!")
