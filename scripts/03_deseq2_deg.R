@@ -1,9 +1,9 @@
 # Differential expression analysis
 library(DESeq2)
-library(tidyverse)
 library(AnnotationDbi)
 library(org.Hs.eg.db)
 library(ggrepel)
+library(tidyverse)
 
 # Read in pre-processed qc DESeq2 dataset object
 dds_qc <- readRDS("data/processed/dds_qc.rds")
@@ -29,7 +29,7 @@ map <- AnnotationDbi::select(org.Hs.eg.db,
                              keytype = "ENSEMBL")
 
 res_df <- left_join(res_df, map, by = "ENSEMBL") %>% 
-  select(-ensembl_with_version)
+  dplyr::select(-ensembl_with_version)
 
 # Save full table
 write.csv(res_df %>% arrange(padj), "results/tables/DEG_tumor_vs_normal_full.csv", row.names = FALSE)

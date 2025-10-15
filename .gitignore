@@ -3,3 +3,4 @@ data/
 GDCdata/
 *.txt
 *.R
+.Rproj.user
