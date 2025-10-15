@@ -40,10 +40,13 @@ fgsea_res_clean <- fgsea_res %>%
 fgsea_res_clean <- fgsea_res_clean %>% arrange(padj)
 write.csv(fgsea_res_clean, "results/tables/gsea_hallmark.csv", row.names = FALSE)
 
-# Plot top pathway (example)
-top_path <- fgsea_res$pathway[1]
+# Plot top pathway using clean dataframe
+top_path <- fgsea_res_clean$pathway[1]
 png("results/figures/gsea_top.png", width = 800, height = 600, res = 150)
-plotEnrichment(msig_hallmark[[top_path]], ranks) + ggtitle(top_path)
+p <- plotEnrichment(msig_hallmark[[top_path]], ranks) + 
+  ggtitle(top_path) +
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
+print(p)
 dev.off()
 
 print("Script 04 - Functional Enrichment Complete!")
