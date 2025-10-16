@@ -1,19 +1,25 @@
-# scripts/05_survival.R
+# Survival analysis
 library(tidyverse)
 library(survival)
 library(survminer)
+library(SummarizedExperiment)
 
 # Load required objects
 vsd <- readRDS("data/processed/vsd_qc.rds")
 clin <- readRDS("data/raw/tcga_brca_clinical.rds")
 
 # Prepare clinical: try to get days and status robustly
-clin2 <- clin %>%
-  mutate(days_to_death = as.numeric(days_to_death),
-         days_to_last_follow_up = as.numeric(days_to_last_follow_up),
-         days = ifelse(!is.na(days_to_death), days_to_death, days_to_last_follow_up),
-         status = ifelse(tolower(vital_status) == "dead", 1, 0)) %>%
-  select(case_id, days, status)
+clin2 <- clin$clinical_patient_brca %>%
+  mutate(
+    days_to_death = as.numeric(as.character(death_days_to)),
+    days_to_last_follow_up = as.numeric(as.character(last_contact_days_to)),
+    # Survival time using death days or follow up if not available
+    days = ifelse(!is.na(days_to_death) & days_to_death > 0, days_to_death,
+                  days_to_last_follow_up),
+    status = ifelse(tolower(vital_status) == 'dead', 1, 0)
+  ) %>%
+  select(case_id = bcr_patient_barcode, days, status) %>%
+  filter(!is.na(days) & days > 0 & !is.na(status))
 
 # Map sample barcodes to case_id (first 12 characters)
 samples <- colnames(vsd)
@@ -25,10 +31,10 @@ gene_symbol <- "MKI67"
 # find row in rowData (if present), otherwise map via Annotation
 row_ann <- rowData(vsd)
 # if rowData has symbol column (common with GDCprepare)
-if("external_gene_name" %in% colnames(row_ann)){
-  ens <- rownames(vsd)[which(row_ann$external_gene_name == gene_symbol)[1]]
+if("gene_name" %in% colnames(row_ann)){
+  ens <- rownames(vsd)[which(row_ann$gene_name == gene_symbol)[1]]
 } else {
-  stop("No external gene symbol in rowData; map Ensembl IDs to SYMBOL first.")
+  stop("Gene Symbol not found!")
 }
 expr <- expr_mat[ens, ]
 df_expr <- tibble(sample = samples, case_id = case_id, expr = expr) %>%
