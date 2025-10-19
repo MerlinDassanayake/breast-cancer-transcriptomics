@@ -2,5 +2,8 @@ data/
 *.rds
 GDCdata/
 *.txt
-*.R*
-*.Rproj.user
+*.R
+*.Rproj
+.RDataTmp
+.Rproj.user
+.RData
