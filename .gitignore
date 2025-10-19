@@ -1,9 +1,22 @@
-data/
-*.rds
-GDCdata/
-*.txt
-*.R
-*.Rproj
-.RDataTmp
-.Rproj.user
+# R temporary files
 .RData
+.RDataTmp*
+.Rhistory
+.Rproj.user/
+*.Rproj
+
+# R output files
+Rplots.pdf
+*.Rapp.history
+
+# Data directories
+data/
+GDCdata/
+*.rds
+*.rda
+*.csv
+*.txt
+
+# Results directories (should be regenerated)
+results/figures/
+results/tables/
