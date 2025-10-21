@@ -42,6 +42,9 @@ ggplot(pc_df, aes(PC1, PC2, color = group)) +
   labs(title = "PCA Plot - Tumor vs Normal Samples")
 ggsave("results/figures/pca_samples.png", width = 7, height = 5, dpi = 300)
 
+# Close open devices after ggsave
+while(!is.null(dev.list())) dev.off()
+
 # Find top 50 variable genes and create heatmap
 topvar <- head(order(matrixStats::rowVars(assay(vsd)), decreasing = TRUE), 50)
 mat <- assay(vsd)[topvar, ]

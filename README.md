@@ -2,6 +2,9 @@
 
 ## Sample Output
 
+### Kaplan-Meier Plots
+![Kaplan-Meier Plots](results/figures/survival_faceted_final.png)
+
 ### Volcano Plot
 ![Volcano Plot](results/figures/volcano.png)
 
