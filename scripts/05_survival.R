@@ -7,6 +7,7 @@ library(patchwork)
 
 # Load required objects
 vsd <- readRDS("data/processed/vsd_qc.rds")
+vsd <- vsd[, vsd$sample_type == "Primary Tumor"]
 clin <- readRDS("data/raw/tcga_brca_clinical.rds")
 deg_results <- read.csv("results/tables/DEG_tumor_vs_normal_full.csv")
 
@@ -24,10 +25,9 @@ top_down_genes <- deg_results %>%  # Significant and strongly downregulated
   head(5) %>%
   pull(SYMBOL)
 
-
 candidate_genes <- c(top_up_genes, top_down_genes)
-# cat("Candidate genes for survival analysis:\n")
-# print(candidate_genes)
+cat("Candidate genes for survival analysis:\n")
+print(candidate_genes)
 
 # Prepare clinical: try to get days and status robustly
 clin_clean <- clin$clinical_patient_brca %>%
@@ -77,7 +77,7 @@ create_survival_plot <- function(gene_symbol, expr_mat, row_ann, case_ids, clin_
   
   # Create survival plot
   s_plot <- ggsurvplot(fit, data = df_expr, pval = TRUE, title = gene_symbol,
-                       palette = plot_colors, legend = 'none')
+                       palette = plot_colors)
   
   return(s_plot$plot)
 }

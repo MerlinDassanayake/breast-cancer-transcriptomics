@@ -59,7 +59,6 @@ pheatmap(mat_sampled,
          show_rownames = TRUE,
          show_colnames = FALSE,
          annotation_col = as.data.frame(colData(vsd)[sampled_columns, "group", drop = FALSE]))
-
 dev.off()
 
 print("Script 02 Complete!")
