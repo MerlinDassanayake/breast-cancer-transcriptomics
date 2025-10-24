@@ -8,9 +8,8 @@ library(pheatmap)
 se <- readRDS("data/raw/tcga_brca_counts_se.rds")
 
 # Basic filtering: keep protein-coding genes and drop low counts
-if("gene_type" %in% colnames(rowData(se))){
-  se <- se[rowData(se)$gene_type == "protein_coding", ]
-}
+se <- se[rowData(se)$gene_type == 'protein_coding', ]
+
 counts <- assay(se)
 keep_genes <- rowSums(counts >= 10) >= 10
 se <- se[keep_genes, ]
@@ -20,10 +19,9 @@ se <- se[keep_genes, ]
 colData(se)$group <- ifelse(colData(se)$sample_type == 'Primary Tumor', 'Tumor', 'Normal')
 
 # Build DESeqDataSet with design (Tumor vs Normal)
-# coldata <- as.data.frame(colData(se))
-
 dds_qc <- DESeqDataSet(se, design = ~ group)
 
+# Variance Stabilizing Transform
 vsd <- vst(dds_qc, blind = TRUE)
 
 # Save dds and vsd into processed data
@@ -43,6 +41,7 @@ ggplot(pc_df, aes(PC1, PC2, color = group)) +
 ggsave("results/figures/pca_samples.png", width = 7, height = 5, dpi = 300)
 
 # Close open devices after ggsave
+# Still having issues with RPlot.pdf creation during bash script run
 while(!is.null(dev.list())) dev.off()
 
 # Find top 50 variable genes and create heatmap

@@ -11,16 +11,13 @@ dds_qc <- readRDS("data/processed/dds_qc.rds")
 # Run full DESeq2 analysis pipeline
 dds <- DESeq(dds_qc)
 
-# Check available coef
-print(resultsNames(dds))
-
 # Extract results with apeglm shrinkage
 res_shr <- lfcShrink(dds, coef = "group_Tumor_vs_Normal", type = "apeglm")
 
 # Make a tidy results table
 res_df <- as.data.frame(res_shr) %>%
   rownames_to_column(var = "ensembl_with_version") %>%
-  mutate(ENSEMBL = gsub("\\..*", "", ensembl_with_version))  # remove Ensembl version suffix if present
+  mutate(ENSEMBL = gsub("\\..*", "", ensembl_with_version))  # remove Ensembl version suffix
 
 # Map to gene symbols and Entrez IDs
 map <- AnnotationDbi::select(org.Hs.eg.db,
