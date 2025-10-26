@@ -34,17 +34,15 @@ pca <- prcomp(t(assay(vsd)))
 pc_df <- as_tibble(pca$x[,1:2], rownames = 'sample')  # Extract first two PCs
 pc_df$group <- colData(se)$group  # Append group column
 
-# Simple PCA plot with two PCs
-ggplot(pc_df, aes(PC1, PC2, color = group)) + 
+#PCA plot with two PCs
+pca_plot <- ggplot(pc_df, aes(PC1, PC2, color = group)) + 
   geom_point(size = 2.5) + 
   theme_minimal() +
   labs(title = "PCA Plot - Tumor vs Normal Samples") +
   scale_color_manual(values = c("Tumor" = "blue", "Normal" = "red"))
-ggsave("results/figures/pca_samples.png", width = 7, height = 5, dpi = 300)
-
-# Close open devices after ggsave
-# Still having issues with RPlot.pdf creation during bash script run
-while(!is.null(dev.list())) dev.off()
+png("results/figures/pca_samples.png", width = 900, height = 700, res = 150)
+print(pca_plot)
+dev.off()
 
 # Find top 50 genes with most variance and create heatmap
 topvar <- head(order(matrixStats::rowVars(assay(vsd)), decreasing = TRUE), 50)

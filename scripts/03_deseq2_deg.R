@@ -41,6 +41,7 @@ p <- ggplot(res_plot, aes(log2FoldChange, -log10(padj))) +
   geom_vline(xintercept = c(-1,1), linetype = "dashed") +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
   ggrepel::geom_text_repel(data = top_hits, aes(label = SYMBOL), size = 2) +
+  labs(title="Volcano Plot: Tumor vs. Normal Differential Expression")
   theme_minimal()
 ggsave("results/figures/volcano.png", p, width = 7, height = 5, dpi = 300)
 
