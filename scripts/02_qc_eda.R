@@ -38,7 +38,8 @@ pc_df$group <- colData(se)$group  # Append group column
 ggplot(pc_df, aes(PC1, PC2, color = group)) + 
   geom_point(size = 2.5) + 
   theme_minimal() +
-  labs(title = "PCA Plot - Tumor vs Normal Samples")
+  labs(title = "PCA Plot - Tumor vs Normal Samples") +
+  scale_color_manual(values = c("Tumor" = "blue", "Normal" = "red"))
 ggsave("results/figures/pca_samples.png", width = 7, height = 5, dpi = 300)
 
 # Close open devices after ggsave
