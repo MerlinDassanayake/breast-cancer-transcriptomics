@@ -11,7 +11,7 @@ dds_qc <- readRDS("data/processed/dds_qc.rds")
 # Run full DESeq2 analysis pipeline
 dds <- DESeq(dds_qc)
 
-# Extract results with apeglm shrinkage
+# Apply shrinkage to stabilize effect sizes
 res_shr <- lfcShrink(dds, coef = "group_Tumor_vs_Normal", type = "apeglm")
 
 # Make a tidy results table
@@ -31,10 +31,11 @@ res_df <- left_join(res_df, map, by = "ENSEMBL") %>%
 # Save full table
 write.csv(res_df %>% arrange(padj), "results/tables/DEG_tumor_vs_normal_full.csv", row.names = FALSE)
 
-# Quick volcano plot (label top hits)
+# Label top genes for volcano plot annotation
 res_plot <- res_df %>% filter(!is.na(padj))
 top_hits <- res_plot %>% arrange(padj) %>% slice_head(n = 10)
 
+# Create volcano plot
 p <- ggplot(res_plot, aes(log2FoldChange, -log10(padj))) +
   geom_point(alpha = 0.4) +
   geom_vline(xintercept = c(-1,1), linetype = "dashed") +

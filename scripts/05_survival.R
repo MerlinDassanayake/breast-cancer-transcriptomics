@@ -29,7 +29,7 @@ candidate_genes <- c(top_up_genes, top_down_genes)
 cat("Candidate genes for survival analysis:\n")
 print(candidate_genes)
 
-# Prepare clinical: try to get days and status robustly
+# Prepare clinical data for survival analysis
 clin_clean <- clin$clinical_patient_brca %>%
   mutate(
     days_to_death = suppressWarnings(as.numeric(as.character(death_days_to))),
@@ -82,9 +82,11 @@ create_survival_plot <- function(gene_symbol, expr_mat, row_ann, case_ids, clin_
   return(s_plot$plot)
 }
 
+# Initialize lists for up and down regulated survival plots
 up_plots <- list()
 down_plots <- list()
 
+# Iterate over up-regulated genes to create survival plot for each
 for (gene in top_up_genes) {
   plot <- create_survival_plot(gene, expr_mat, row_ann, case_ids, clin_clean, samples,
                                "up")
@@ -93,6 +95,7 @@ for (gene in top_up_genes) {
   }
 }
 
+# Iterate over down-regulated genes to create survival plot for each
 for (gene in top_down_genes) {
   plot <- create_survival_plot(gene, expr_mat, row_ann, case_ids, clin_clean, samples,
                                "down")
@@ -101,9 +104,11 @@ for (gene in top_down_genes) {
   }
 }
 
+# Create up and down regulated panels for facet plot
 up_panel <- wrap_plots(up_plots, ncol = 5)
 down_panel <- wrap_plots(down_plots, ncol = 5)
 
+# Create final facet plot
 final_plot <- up_panel / down_panel +
   plot_annotation(
     title = "Survival Analysis of Top Differentially Expressed Genes in Breast Cancer",
@@ -111,9 +116,10 @@ final_plot <- up_panel / down_panel +
     theme_minimal()
   )
 
+# Save plot to results section
 ggsave("results/figures/survival_faceted_final.png", 
        final_plot, 
-       width = 16, 
+       width = 17, 
        height = 10, 
        dpi = 300,
        bg = "white")

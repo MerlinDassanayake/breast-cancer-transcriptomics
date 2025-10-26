@@ -7,23 +7,27 @@ library(tidyverse)
 
 res_df <- read.csv("results/tables/DEG_tumor_vs_normal_full.csv")
 
-# ORA: use ENTREZ IDs of up/down significant genes
+# Filter for significantly up-regulated genes
+# Need ENTREZID for GO analysis
+# Adjusted p-value < 0.05 and at least two fold DE
 sig_up <- res_df %>% filter(!is.na(ENTREZID) & padj < 0.05 & log2FoldChange > 1) %>%
   pull(ENTREZID) %>% 
   unique()
 
-
+# Filter for significantly down-regulated genes
 sig_down <- res_df %>% filter(!is.na(ENTREZID) & padj < 0.05 & log2FoldChange < -1) %>%
   pull(ENTREZID) %>% 
   unique()
 
+# Run GO Enrichment (human annotation database and Biological Process)
 ego_up <- enrichGO(gene = sig_up, OrgDb = org.Hs.eg.db, ont = "BP", readable = TRUE)
 ego_dn <- enrichGO(gene = sig_down, OrgDb = org.Hs.eg.db, ont = "BP", readable = TRUE)
 
+# Save results of GO Enrichment
 write.csv(as.data.frame(ego_up), "results/tables/GO_up.csv", row.names = FALSE)
 write.csv(as.data.frame(ego_dn), "results/tables/GO_dn.csv", row.names = FALSE)
 
-# GSEA using MSigDB Hallmarks (rank all genes by a statistic)
+# GSEA using MSigDB Hallmarks 
 msig_hallmark <- msigdbr(species = "Homo sapiens", collection = "H") %>%
   split(x = .$gene_symbol, f = .$gs_name)
 
