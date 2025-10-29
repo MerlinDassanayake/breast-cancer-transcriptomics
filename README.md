@@ -31,7 +31,7 @@ All steps can be executed automatically via:
 
 ```bash
 bash run_analysis.sh
-
+```
 
 ## Example Visualizations
 
