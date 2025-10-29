@@ -31,3 +31,14 @@ All steps can be executed automatically via:
 
 ```bash
 bash run_analysis.sh
+
+
+## Example Visualizations
+
+| Differential Expression | Enrichment Analysis |
+|--------------------------|---------------------|
+| <img src="results/figures/volcano.png" width="400"/> | <img src="results/figures/gsea_top.png" width="400"/> |
+
+| Survival Analysis | PCA (Quality Control) |
+|-------------------|-----------------------|
+| <img src="results/figures/survival_faceted_final.png" width="400"/> | <img src="results/figures/pca_samples.png" width="400"/> |
