@@ -1,11 +1,19 @@
 name: bc-rna
-channels: [conda-forge, bioconda, r]
+channels:
+  - conda-forge
+  - bioconda
+  - r
 dependencies:
   - r-base>=4.3
   - r-tidyverse
+  - r-dplyr
+  - r-ggplot2
+  - r-viridis
+  - r-patchwork
   - bioconductor-tcgabiolinks
   - bioconductor-deseq2
-  - bioconductor-org.hs.eg.bd
+  - bioconductor-summarizedexperiment
+  - bioconductor-org.hs.eg.db
   - bioconductor-annotationdbi
   - bioconductor-clusterprofiler
   - bioconductor-fgsea
@@ -15,3 +23,4 @@ dependencies:
   - r-msigdbr
   - r-data.table
   - r-ggrepel
+  - r-renv
